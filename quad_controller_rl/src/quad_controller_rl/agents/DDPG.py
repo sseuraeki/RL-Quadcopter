@@ -102,7 +102,6 @@ class DDPG(BaseAgent):
         actions += self.noise.sample()  # add some noise for exploration
 
         # ignore torques
-        print("Action: ", actions)
         actions[:, 3:] = 0.
         return actions
 
