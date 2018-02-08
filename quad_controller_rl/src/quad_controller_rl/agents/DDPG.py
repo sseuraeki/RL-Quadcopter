@@ -1,9 +1,9 @@
 import numpy as np
 from quad_controller_rl.agents.base_agent import BaseAgent
-import ReplayBuffer
-import Actor
-import Critic
-import OUNoise
+from quad_controller_rl.agents.ReplayBuffer import ReplayBuffer
+from quad_controller_rl.agents.Actor import Actor
+from quad_controller_rl.agents.Critic import Critic
+from quad_controller_rl.agents.OUNoise import OUNoise
 
 
 class DDPG(BaseAgent):
