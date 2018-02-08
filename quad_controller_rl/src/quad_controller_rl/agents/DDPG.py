@@ -13,6 +13,7 @@ class DDPG(BaseAgent):
     def __init__(self, task):
         # Task information
         self.task = task
+        print(self.task)
         self.state_size = np.prod(self.task.observation_space.shape)
         self.state_range = self.task.observation_space.high - self.task.observation_space.low
         self.action_size = np.prod(self.task.action_space.shape)
