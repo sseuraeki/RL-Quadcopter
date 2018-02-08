@@ -99,6 +99,10 @@ class DDPG(BaseAgent):
         """Returns actions for given state(s) as per current policy."""
         states = np.reshape(states, [-1, self.state_size])
         actions = self.actor_local.model.predict(states)
+        if self.task == 'Takeoff':
+            actions = actions + self.noise.sample()
+            actions = actions[:3] + [0., 0., 0.]
+            return actions
         return actions + self.noise.sample()  # add some noise for exploration
 
     def learn(self, experiences):
