@@ -101,9 +101,8 @@ class DDPG(BaseAgent):
         actions = self.actor_local.model.predict(states)
         actions += self.noise.sample()  # add some noise for exploration
 
-        # ignore torques when takeoff
-        if self.task == 'Takeoff':
-            actions = np.hstack([actions[0:3],[0., 0., 0.,]])
+        # ignore torques
+        actions = np.hstack([actions[0:3],[0., 0., 0.,]])
         return actions
 
     def learn(self, experiences):
