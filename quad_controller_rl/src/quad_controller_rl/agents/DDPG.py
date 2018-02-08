@@ -102,7 +102,7 @@ class DDPG(BaseAgent):
         actions += self.noise.sample()  # add some noise for exploration
 
         # ignore torques
-        actions = np.hstack([actions[0:3],[0., 0., 0.,]])
+        actions[:, 3:] = 0.
         return actions
 
     def learn(self, experiences):
