@@ -67,6 +67,10 @@ class DDPG(BaseAgent):
             header=not os.path.isfile(self.stats_filename))  # write header first time only
 
     def step(self, state, reward, done):
+        # Transform state vector
+        state = (state - self.task.observation_space.low) / self.state_range  # scale to [0.0, 1.0]
+        state = state.reshape(1, -1)  # convert to row vector
+
         # Choose an action
         action = self.act(state)
 
@@ -81,6 +85,7 @@ class DDPG(BaseAgent):
             self.learn(experiences)
 
         if done:
+            self.reset_episode_vars()
             # Write episode stats
             self.write_stats([self.episode_num, self.total_reward])
             self.episode_num += 1
