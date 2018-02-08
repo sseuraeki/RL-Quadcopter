@@ -46,13 +46,14 @@ class RandomPolicySearch(BaseAgent):
             self.total_reward += reward
             self.count += 1
 
+        self.last_state = state
+        self.last_action = action
+
         # Learn, if at end of episode
         if done:
             self.learn()
             self.reset_episode_vars()
 
-        self.last_state = state
-        self.last_action = action
         return action
 
     def act(self, state):

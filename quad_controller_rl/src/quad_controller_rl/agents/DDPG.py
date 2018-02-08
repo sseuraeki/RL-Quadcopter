@@ -84,14 +84,14 @@ class DDPG(BaseAgent):
             experiences = self.memory.sample(self.batch_size)
             self.learn(experiences)
 
+        self.last_state = state
+        self.last_action = action
+
         if done:
             self.reset_episode_vars()
             # Write episode stats
             self.write_stats([self.episode_num, self.total_reward])
             self.episode_num += 1
-
-        self.last_state = state
-        self.last_action = action
 
         return action
 
