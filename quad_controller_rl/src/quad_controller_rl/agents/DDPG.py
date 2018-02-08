@@ -78,7 +78,7 @@ class DDPG(BaseAgent):
         # so I modified the reward a bit (Euclidean distance from last state)
         if self.last_state is not None and self.last_action is not None:
             prev_x = self.last_state[:,0]
-            prev_y = self.last_state[:,0]
+            prev_y = self.last_state[:,1]
 
             next_x = state[:,0]
             next_y = state[:,1]
