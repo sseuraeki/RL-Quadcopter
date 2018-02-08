@@ -63,8 +63,7 @@ class Takeoff(BaseTask):
             action = np.clip(action.flatten(), self.action_space.low, self.action_space.high)  # flatten, clamp to action space limits
             return Wrench(
                     force=Vector3(action[0], action[1], action[2]),
-                    #torque=Vector3(action[3], action[4], action[5])
-                    torque=Vector3(0., 0., 0.)
+                    torque=Vector3(action[3], action[4], action[5])
                 ), done
         else:
             return Wrench(), done

@@ -13,7 +13,6 @@ class DDPG(BaseAgent):
     def __init__(self, task):
         # Task information
         self.task = task
-        print(self.task)
         self.state_size = np.prod(self.task.observation_space.shape)
         self.state_range = self.task.observation_space.high - self.task.observation_space.low
         self.action_size = np.prod(self.task.action_space.shape)
@@ -100,7 +99,12 @@ class DDPG(BaseAgent):
         """Returns actions for given state(s) as per current policy."""
         states = np.reshape(states, [-1, self.state_size])
         actions = self.actor_local.model.predict(states)
-        return actions + self.noise.sample()  # add some noise for exploration
+        actions += self.noise.sample()  # add some noise for exploration
+
+        # ignore torques when takeoff
+        if self.task == 'Takeoff':
+            actions = np.hstack([actions[0:3],[0., 0., 0.,]])
+        return actions
 
     def learn(self, experiences):
         """Update policy and value parameters using given batch of experience tuples."""
