@@ -62,7 +62,7 @@ class DDPG(BaseAgent):
 
     def write_stats(self, stats):
         """Write single episode stats to CSV file."""
-        df_stats = pd.DataFrame(stats, columns=self.stats_columns)  # single-row dataframe
+        df_stats = pd.DataFrame([stats], columns=self.stats_columns)  # single-row dataframe
         df_stats.to_csv(self.stats_filename, mode='a', index=False,
             header=not os.path.isfile(self.stats_filename))  # write header first time only
 
@@ -77,8 +77,8 @@ class DDPG(BaseAgent):
         # I want the drone to keep its x,y position (that is, not moving around)
         # so I modified the reward a bit (Euclidean distance from the initial state)
         if state is not None:
-            x_diff = state[:,0]
-            y_diff = state[:,1]
+            x_diff = state[:,0][0]
+            y_diff = state[:,1][0]
             penalty = np.sqrt(np.square(x_diff) + np.square(y_diff))
             # too big a penalty might override the purposed reward
             # so give less weight
