@@ -32,7 +32,13 @@ class Actor:
 
         # Add hidden layers
         net = layers.Dense(units=32, activation='relu')(states)
-        net = layers.Dense(units=64, activation='relu')(net)
+
+        # Add batch normalization
+        net = layers.BatchNormalization()(net)
+
+        net = layers.Dense(units=32, activation='relu')(net)
+        net = layers.BatchNormalization()(net)
+
         net = layers.Dense(units=32, activation='relu')(net)
 
         # Try different layer sizes, activations, add batch normalization, regularizers, etc.
