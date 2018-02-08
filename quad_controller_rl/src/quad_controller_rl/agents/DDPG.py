@@ -52,6 +52,14 @@ class DDPG(BaseAgent):
         self.episode_num = 1
         print("Saving stats {} to {}".format(self.stats_columns, self.stats_filename))  # [debug]
 
+        # Episode variables
+        self.reset_episode_vars()
+
+    def reset_episode_vars(self):
+        self.last_state = None
+        self.last_action = None
+        self.total_reward = 0.0
+
     def write_stats(self, stats):
         """Write single episode stats to CSV file."""
         df_stats = pd.DataFrame([stats], columns=self.stats_columns)  # single-row dataframe
@@ -65,6 +73,7 @@ class DDPG(BaseAgent):
         # Save experience / reward
         if self.last_state is not None and self.last_action is not None:
             self.memory.add(self.last_state, self.last_action, reward, state, done)
+            self.total_reward += reward
 
         # Learn, if enough samples are available in memory
         if len(self.memory) > self.batch_size:
@@ -75,6 +84,11 @@ class DDPG(BaseAgent):
             # Write episode stats
             self.write_stats([self.episode_num, self.total_reward])
             self.episode_num += 1
+
+        self.last_state = state
+        self.last_action = action
+
+        return action
 
     def act(self, states):
         """Returns actions for given state(s) as per current policy."""
