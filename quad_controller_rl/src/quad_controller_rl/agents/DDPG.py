@@ -76,10 +76,7 @@ class DDPG(BaseAgent):
 
         # I want the drone to keep its x,y position (that is, not moving around)
         # so I modified the reward a bit (Euclidean distance from last state)
-        if self.last_state is None:
-            prev_x = 0.
-            prev_y = 0.
-        else:
+        if self.last_state is not None:
             prev_x = self.last_state[:,0]
             prev_y = self.last_state[:,0]
 
@@ -104,10 +101,10 @@ class DDPG(BaseAgent):
         self.last_action = action
 
         if done:
-            self.reset_episode_vars()
             # Write episode stats
             self.write_stats([self.episode_num, self.total_reward])
             self.episode_num += 1
+            self.reset_episode_vars()
 
         return action
 
