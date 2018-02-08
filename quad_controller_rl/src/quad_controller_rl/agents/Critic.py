@@ -1,3 +1,4 @@
+import numpy as np
 from keras import layers, models, optimizers
 from keras import backend as K
 
