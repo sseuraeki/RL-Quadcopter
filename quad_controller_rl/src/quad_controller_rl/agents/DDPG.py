@@ -76,8 +76,8 @@ class DDPG(BaseAgent):
 
         # I want the drone to keep its x,y position (that is not moving around)
         # so I modified the reward a bit (Euclidean distance from the initial point)
-        x_diff = abs(state[:,0])
-        y_diff = abs(state[:,1])
+        x_diff = state[:,0]
+        y_diff = state[:,1]
         penalty = np.sqrt(np.square(x_diff) + np.square(y_diff))
 
         reward -= penalty
