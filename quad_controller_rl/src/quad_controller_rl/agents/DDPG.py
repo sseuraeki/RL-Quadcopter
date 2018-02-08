@@ -74,6 +74,14 @@ class DDPG(BaseAgent):
         # Choose an action
         action = self.act(state)
 
+        # I want the drone to keep its x,y position (that is not moving around)
+        # so I modified the reward a bit
+        x_diff = abs(state[:,0])
+        y_diff = abs(state[:,1])
+        penalty = x_diff + y_diff
+
+        reward -= penalty
+
         # Save experience / reward
         if self.last_state is not None and self.last_action is not None:
             self.memory.add(self.last_state, self.last_action, reward, state, done)
