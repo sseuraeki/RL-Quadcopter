@@ -43,7 +43,6 @@ class DDPG(BaseAgent):
         self.tau = 0.001  # for soft update of target parameters
 
         # Score tracker and learning parameters
-        self.best_w = None
         self.best_score = -np.inf
         self.noise_scale = 0.1
 
@@ -63,6 +62,8 @@ class DDPG(BaseAgent):
         # Save experience / reward
         if self.last_state is not None and self.last_action is not None:
             self.memory.add(self.last_state, self.last_action, reward, state, done)
+            self.total_reward += reward
+            self.count += 1
 
         # Learn, if enough samples are available in memory
         if len(self.memory) > self.batch_size:
@@ -100,6 +101,14 @@ class DDPG(BaseAgent):
         # Soft-update target models
         self.soft_update(self.critic_local.model, self.critic_target.model)
         self.soft_update(self.actor_local.model, self.actor_target.model)
+
+        # record scores for debugging
+        score = self.total_reward / float(self.count) if self.count else 0.0
+        if score > self.best_score:
+            self.best_score = score
+
+        print("DDPG.learn(): t = {:4d}, score = {:7.3f} (best = {:7.3f})".format(
+                self.count, score, self.best_score))  # [debug]
 
     def soft_update(self, local_model, target_model):
         """Soft update model parameters."""
