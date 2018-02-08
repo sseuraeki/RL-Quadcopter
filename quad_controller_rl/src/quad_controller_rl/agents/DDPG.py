@@ -4,7 +4,9 @@ from quad_controller_rl.agents.ReplayBuffer import ReplayBuffer
 from quad_controller_rl.agents.Actor import Actor
 from quad_controller_rl.agents.Critic import Critic
 from quad_controller_rl.agents.OUNoise import OUNoise
-
+import os
+import pandas as pd
+from quad_controller_rl import util
 
 class DDPG(BaseAgent):
     """Reinforcement Learning agent that learns using DDPG."""
@@ -42,18 +44,19 @@ class DDPG(BaseAgent):
         self.gamma = 0.99  # discount factor
         self.tau = 0.001  # for soft update of target parameters
 
-        # Score tracker and learning parameters
-        self.best_score = -np.inf
-        self.noise_scale = 0.1
+        # writing episode stats
+        self.stats_filename = os.path.join(
+            util.get_param('out'),
+            "stats_{}.csv".format(util.get_timestamp()))  # path to CSV file
+        self.stats_columns = ['episode', 'total_reward']  # specify columns to save
+        self.episode_num = 1
+        print("Saving stats {} to {}".format(self.stats_columns, self.stats_filename))  # [debug]
 
-        # Episode variables
-        self.reset_episode_vars()
-
-    def reset_episode_vars(self):
-        self.last_state = None
-        self.last_action = None
-        self.total_reward = 0.0
-        self.count = 0
+    def write_stats(self, stats):
+        """Write single episode stats to CSV file."""
+        df_stats = pd.DataFrame([stats], columns=self.stats_columns)  # single-row dataframe
+        df_stats.to_csv(self.stats_filename, mode='a', index=False,
+            header=not os.path.isfile(self.stats_filename))  # write header first time only
 
     def step(self, state, reward, done):
         # Choose an action
@@ -62,13 +65,16 @@ class DDPG(BaseAgent):
         # Save experience / reward
         if self.last_state is not None and self.last_action is not None:
             self.memory.add(self.last_state, self.last_action, reward, state, done)
-            self.total_reward += reward
-            self.count += 1
 
         # Learn, if enough samples are available in memory
         if len(self.memory) > self.batch_size:
             experiences = self.memory.sample(self.batch_size)
             self.learn(experiences)
+
+        if done:
+            # Write episode stats
+            self.write_stats([self.episode_num, self.total_reward])
+            self.episode_num += 1
 
     def act(self, states):
         """Returns actions for given state(s) as per current policy."""
@@ -101,14 +107,6 @@ class DDPG(BaseAgent):
         # Soft-update target models
         self.soft_update(self.critic_local.model, self.critic_target.model)
         self.soft_update(self.actor_local.model, self.actor_target.model)
-
-        # record scores for debugging
-        score = self.total_reward / float(self.count) if self.count else 0.0
-        if score > self.best_score:
-            self.best_score = score
-
-        print("DDPG.learn(): t = {:4d}, score = {:7.3f} (best = {:7.3f})".format(
-                self.count, score, self.best_score))  # [debug]
 
     def soft_update(self, local_model, target_model):
         """Soft update model parameters."""
