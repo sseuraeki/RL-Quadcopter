@@ -76,16 +76,16 @@ class DDPG(BaseAgent):
 
         # I want the drone to keep its x,y position (that is, not moving around)
         # so I modified the reward a bit (Euclidean distance from last state)
-        if self.last_state is not None:
+        if self.last_state is not None and self.last_action is not None:
             prev_x = self.last_state[:,0]
             prev_y = self.last_state[:,0]
 
-        next_x = state[:,0]
-        next_y = state[:,1]
-        penalty = np.sqrt(np.square(next_x - prev_x) + 
-                          np.square(next_y - prev_y))
+            next_x = state[:,0]
+            next_y = state[:,1]
+            penalty = np.sqrt(np.square(next_x - prev_x) + 
+                              np.square(next_y - prev_y))
 
-        reward -= penalty
+            reward -= penalty
 
         # Save experience / reward
         if self.last_state is not None and self.last_action is not None:
