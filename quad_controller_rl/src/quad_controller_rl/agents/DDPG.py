@@ -100,6 +100,7 @@ class DDPG(BaseAgent):
 
         if done:
             # Write episode stats
+            print("Total reward: {}".format(self.total_reward)) # debug
             self.write_stats([self.episode_num, self.total_reward])
             self.episode_num += 1
             self.reset_episode_vars()
