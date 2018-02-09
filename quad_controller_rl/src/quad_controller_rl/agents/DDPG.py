@@ -104,6 +104,9 @@ class DDPG(BaseAgent):
 
         # ignore torques
         actions[:, 3:] = 0.
+        # ignore x,y forces
+        actions[:, 0] = 0.
+        actions[:, 1] = 0.
         return actions
 
     def learn(self, experiences):
