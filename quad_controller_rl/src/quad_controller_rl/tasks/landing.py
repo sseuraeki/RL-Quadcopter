@@ -51,7 +51,7 @@ class Landing(BaseTask):
         reward = 0.0
 
         # linear_acceleration as penalty but bigger when closer to land, smaller when high up
-        accel_scalar = abs(pose.linear.x) + abs(pose.linear.y) + abs(pose.linear.z)
+        print(linear_acceleration)
 
         reward += -(accel_scalar) * (1 / pose.position.z)
 
