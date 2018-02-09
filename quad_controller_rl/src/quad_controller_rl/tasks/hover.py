@@ -34,7 +34,9 @@ class Hover(BaseTask):
                 position=Point(0.0, 0.0, np.random.normal(10.0, 0.1)),  # start somewhere around 10 z
                 orientation=Quaternion(0.0, 0.0, 0.0, 0.0),
             ), Twist(
-                linear=Vector3(0.0, 0.0, 0.0),
+                linear=Vector3(np.random.normal(0., 1.0),
+                               np.random.normal(0., 1.0),
+                               np.random.normal(0., 1.0)), # after takeoff, there might be some velocity
                 angular=Vector3(0.0, 0.0, 0.0)
             )
 
