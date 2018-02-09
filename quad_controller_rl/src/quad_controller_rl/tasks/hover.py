@@ -50,7 +50,7 @@ class Hover(BaseTask):
         done = False
         reward = 0.0
         reward += -min(abs(self.target_z - pose.position.z), 20.0)  # the farther away from the target z, the less reward
-        reward -= self.max_duration - timestamp # the longer the copter survives, the more reward
+        reward += timestamp # the longer the copter survives, the more reward
 
         # define done conditions
         if pose.position.z < 1.0:
