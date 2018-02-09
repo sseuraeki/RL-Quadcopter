@@ -55,7 +55,8 @@ class Hover(BaseTask):
         elif pose.position.z > self.target_z + 10.0:
             reward -= 1000.0 # big penalty when it goes too high up
             done = True
-        elif timestamp > self.max_duration:  # task end (time over)
+        elif timestamp > self.max_duration:  # task end
+            reward += 1000.0 # big bonus when it survives the target duration
             done = True
 
         # Take one RL step, passing in current state and reward, and obtain action
