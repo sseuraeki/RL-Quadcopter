@@ -31,7 +31,7 @@ class Actor:
         states = layers.Input(shape=(self.state_size,), name='states')
 
         # Add hidden layers
-        net = layers.Dense(units=64)(states)
+        net = layers.Dense(units=16)(states)
 
         # Add batch normalization
         net = layers.BatchNormalization()(net)
@@ -40,15 +40,9 @@ class Actor:
         net = layers.Activation('relu')(net)
 
         # Add dropout
-        net = layers.Dropout(0.5)(net)
+        #net = layers.Dropout(0.5)(net)
 
-        # next layers
-        net = layers.Dense(units=128)(net)
-        net = layers.BatchNormalization()(net)
-        net = layers.Activation('relu')(net)
-        net = layers.Dropout(0.5)(net)
-
-        net = layers.Dense(units=128, activation='relu')(net)
+        #net = layers.Dense(units=16, activation='relu')(net)
 
         # Try different layer sizes, activations, add batch normalization, regularizers, etc.
 
