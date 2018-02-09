@@ -46,17 +46,18 @@ class Hover(BaseTask):
 
         # Compute reward / penalty and check if this episode is complete
         done = False
-        reward = -min(abs(self.target_z - pose.position.z), 20.0)  # reward = zero for matching target z, -ve as you go farther, upto -20
+        reward = -min(abs(self.target_z - pose.position.z), 20.0)  # the farther away from the target z, the less reward
+        reward += timestamp - self.max_duration # the longer the copter survives, the more reward
 
         # define done conditions
         if pose.position.z < 1.0:
-            reward -= 1000.0 # big penalty when it hits the ground (or very close to it)
+            reward -= 100.0 # big penalty when it hits the ground (or very close to it)
             done = True
         elif pose.position.z > self.target_z + 10.0:
-            reward -= 1000.0 # big penalty when it goes too high up
+            reward -= 100.0 # big penalty when it goes too high up
             done = True
         elif timestamp > self.max_duration:  # task end
-            reward += 1000.0 # big bonus when it survives the target duration
+            reward += 100.0 # big bonus when it survives the target duration
             done = True
 
         # Take one RL step, passing in current state and reward, and obtain action
