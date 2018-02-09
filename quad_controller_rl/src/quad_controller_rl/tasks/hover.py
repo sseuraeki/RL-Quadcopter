@@ -50,10 +50,10 @@ class Hover(BaseTask):
 
         # define done conditions
         if pose.position.z < 1.0:
-            reward -= 100.0 # penalty when it hits the ground (or very close to it)
+            reward -= 1000.0 # big penalty when it hits the ground (or very close to it)
             done = True
         elif pose.position.z > self.target_z + 10.0:
-            reward -= 100.0 # penalty when it goes too high up
+            reward -= 1000.0 # big penalty when it goes too high up
             done = True
         elif timestamp > self.max_duration:  # task end (time over)
             done = True
