@@ -74,6 +74,16 @@ class DDPG(BaseAgent):
         # Choose an action
         action = self.act(state)
 
+        # additional penalty for rewards
+        # I don't want the drone to move around too much
+        # so adding Euclidean distance from the initial point
+        # is getting added as penalty
+        diff_x = state[:, 0][0]
+        diff_y = state[:, 1][0]
+        distance = np.sqrt(np.square(diff_x) + np.square(diff_y))
+
+        reward -= distance
+
         # Save experience / reward
         if self.last_state is not None and self.last_action is not None:
             self.memory.add(self.last_state, self.last_action, reward, state, done)
@@ -104,9 +114,6 @@ class DDPG(BaseAgent):
 
         # ignore torques
         actions[:, 3:] = 0.
-        # ignore x,y forces
-        actions[:, 0] = 0.
-        actions[:, 1] = 0.
         return actions
 
     def learn(self, experiences):
