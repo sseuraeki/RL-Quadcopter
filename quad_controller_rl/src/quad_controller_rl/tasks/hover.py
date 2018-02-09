@@ -58,7 +58,10 @@ class Hover(BaseTask):
             reward -= 100.0 # big penalty when it goes too high up
             done = True
         elif timestamp > self.max_duration:  # task end
-            reward += 100.0 # big bonus when it survives the target duration
+            # very big bonus when it survives the target duration
+            # for debugging purposes, very big total_reward will indicate whether
+            # the agent succeeded or not
+            reward += 1000.0
             done = True
 
         # Take one RL step, passing in current state and reward, and obtain action
