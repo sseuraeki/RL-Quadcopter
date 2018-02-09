@@ -42,9 +42,6 @@ class Landing(BaseTask):
 
     def update(self, timestamp, pose, angular_velocity, linear_acceleration):
         # Prepare state vector (pose only; ignore angular_velocity, linear_acceleration)
-        print("Linear: ", linear_acceleration)
-
-
         state = np.array([
                 pose.position.x, pose.position.y, pose.position.z,
                 pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w])
@@ -54,9 +51,8 @@ class Landing(BaseTask):
         reward = 0.0
 
         # linear_acceleration as penalty but bigger when closer to land, smaller when high up
-        print(linear_acceleration)
 
-        #reward += -(accel_scalar) * (1 / pose.position.z)
+        reward += -linear_acceleration * (1 / pose.position.z)
 
         # define done conditions
         if pose.position.z <= 0.0:
