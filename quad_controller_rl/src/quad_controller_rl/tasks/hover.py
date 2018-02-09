@@ -46,8 +46,9 @@ class Hover(BaseTask):
 
         # Compute reward / penalty and check if this episode is complete
         done = False
-        reward = -min(abs(self.target_z - pose.position.z), 20.0)  # the farther away from the target z, the less reward
-        reward += timestamp - self.max_duration # the longer the copter survives, the more reward
+        reward = 0.0
+        reward += -min(abs(self.target_z - pose.position.z), 20.0)  # the farther away from the target z, the less reward
+        reward -= timestamp - self.max_duration # the longer the copter survives, the more reward
 
         # define done conditions
         if pose.position.z < 1.0:
