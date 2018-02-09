@@ -25,7 +25,7 @@ class Hover(BaseTask):
         #print("Takeoff(): action_space = {}".format(self.action_space))  # [debug]
 
         # Task-specific parameters
-        self.max_duration =10.0  # secs
+        self.max_duration = 10.0  # secs
         self.target_z = 10.0  # target height (z position) to reach for successful takeoff
 
     def reset(self):
@@ -47,7 +47,15 @@ class Hover(BaseTask):
         # Compute reward / penalty and check if this episode is complete
         done = False
         reward = -min(abs(self.target_z - pose.position.z), 20.0)  # reward = zero for matching target z, -ve as you go farther, upto -20
-        if timestamp > self.max_duration:  # agent has run out of time
+
+        # define done conditions
+        if pose.position.z < 1.0:
+            reward -= 100.0 # penalty when it hits the ground (or very close to it)
+            done = True
+        elif pose.position.z > self.target_z + 10.0:
+            reward -= 100.0 # penalty when it goes too high up
+            done = True
+        elif timestamp > self.max_duration:  # task end (time over)
             done = True
 
         # Take one RL step, passing in current state and reward, and obtain action
