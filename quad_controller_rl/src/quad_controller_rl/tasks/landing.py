@@ -36,7 +36,7 @@ class Landing(BaseTask):
             ), Twist(
                 linear=Vector3(np.random.normal(0., 1.0),
                                np.random.normal(0., 1.0),
-                               np.random.normal(0., 1.0)), # after takeoff, there might be some velocity
+                               np.random.normal(0., 1.0)), # there might be some velocity when hovering
                 angular=Vector3(0.0, 0.0, 0.0)
             )
 
@@ -49,18 +49,17 @@ class Landing(BaseTask):
         # Compute reward / penalty and check if this episode is complete
         done = False
         reward = 0.0
-        reward += -min(abs(self.target_z - pose.position.z), 20.0)  # the farther away from the target z, the less reward
-        reward -= timestamp - self.max_duration # the longer the copter survives, the more reward
+
+        # velocity as penalty but bigger when closer to land, smaller when high up
+        reward += -(abs(np.prod(linear_acceleration)) * (1 / pose.position.z))
 
         # define done conditions
-        if pose.position.z < 1.0:
-            reward -= 100.0 # big penalty when it hits the ground (or very close to it)
+        if pose.position.z <= 0.0:
+            reward += self.max_duration - timestamp # time left as reward
+            reward += 100.0 # success reward
             done = True
-        elif pose.position.z > self.target_z + 10.0:
-            reward -= 100.0 # big penalty when it goes too high up
-            done = True
-        elif timestamp > self.max_duration:  # task end
-            reward += 100.0 # big bonus when it survives the target duration
+        elif timestamp > self.max_duration:  # task failed
+            reward += -(pose.position.z) # height as penalty
             done = True
 
         # Take one RL step, passing in current state and reward, and obtain action
