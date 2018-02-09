@@ -76,13 +76,14 @@ class DDPG(BaseAgent):
 
         # additional penalty for rewards
         # I don't want the drone to move around too much
-        # so adding Euclidean distance from the initial point
+        # so adding Euclidean distance from last state (x,y position)
         # is getting added as penalty
-        diff_x = state[:, 0][0]
-        diff_y = state[:, 1][0]
-        distance = np.sqrt(np.square(diff_x) + np.square(diff_y))
+        if self.last_state is not None and self.last_action is not None:
+            diff_x = state[:, 0][0] - self.last_state[:, 0][0]
+            diff_y = state[:, 1][0] - self.last_state[:, 1][0]
+            distance = np.sqrt(np.square(diff_x) + np.square(diff_y))
 
-        reward -= distance
+            reward -= distance * 10 # give * 10 weight to affect reward
 
         # Save experience / reward
         if self.last_state is not None and self.last_action is not None:

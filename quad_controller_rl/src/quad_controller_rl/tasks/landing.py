@@ -31,12 +31,14 @@ class Landing(BaseTask):
     def reset(self):
         # Nothing to reset; just return initial condition
         return Pose(
-                position=Point(0.0, 0.0, np.random.normal(10.0, 0.1)),  # start somewhere around 10 z
+                position=Point(np.random.uniform(- 150., 150.),
+                               np.random.uniform(- 150., 150.),
+                               np.random.normal(10.0, 0.1)),  # start somewhere around 10 z
                 orientation=Quaternion(0.0, 0.0, 0.0, 0.0),
             ), Twist(
                 linear=Vector3(np.random.normal(0., 1.0),
                                np.random.normal(0., 1.0),
-                               np.random.normal(0., 1.0)), # there might be some velocity when hovering
+                               np.random.normal(0., 1.0)), # there might be some velocity
                 angular=Vector3(0.0, 0.0, 0.0)
             )
 
