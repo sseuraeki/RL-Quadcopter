@@ -52,7 +52,9 @@ class Landing(BaseTask):
 
         # linear_acceleration as penalty but bigger when closer to land, smaller when high up
 
-        reward += -linear_acceleration * (1 / pose.position.z)
+        accel_scalar = abs(linear_acceleration.x) + abs(linear_acceleration.y) + abs(linear_acceleration.z)
+
+        reward += -accel_scalar * (1 / pose.position.z)
 
         # define done conditions
         if pose.position.z <= 0.0:
