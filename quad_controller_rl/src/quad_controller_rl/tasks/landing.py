@@ -57,7 +57,7 @@ class Landing(BaseTask):
         reward += -accel_scalar * (1 / pose.position.z)
 
         # define done conditions
-        if pose.position.z <= 0.0:
+        if pose.position.z <= 0.1:
             reward += self.max_duration - timestamp # time left as reward
             reward += 100.0 # success reward
             done = True
