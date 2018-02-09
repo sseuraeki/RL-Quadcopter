@@ -50,8 +50,12 @@ class Landing(BaseTask):
         done = False
         reward = 0.0
 
-        # velocity as penalty but bigger when closer to land, smaller when high up
-        reward += -(abs(np.prod(linear_acceleration)) * (1 / pose.position.z))
+        # linear_acceleration as penalty but bigger when closer to land, smaller when high up
+        accel_scalar = abs(linear_acceleration[:,0][0]) + \
+                       abs(linear_acceleration[:,1][0]) + \
+                       abs(linear_acceleration[:,2][0])
+
+        reward += -(accel_scalar) * (1 / pose.position.z)
 
         # define done conditions
         if pose.position.z <= 0.0:
