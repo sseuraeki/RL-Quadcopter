@@ -105,13 +105,14 @@ class DDPG(BaseAgent):
         """Returns actions for given state(s) as per current policy."""
         states = np.reshape(states, [-1, self.state_size])
         actions = self.actor_local.model.predict(states)
-        actions += self.noise.sample()  # add some noise for exploration
         print(actions)
+        actions += self.noise.sample()  # add some noise for exploration
+
         # get only the z linear force
         #actions[:, 3:] = 0.
         #actions[:, :2] = 0.
         #actions = np.array([0., 0., actions[0], 0., 0., 0., 0.])
-        
+
 
         return actions
 
