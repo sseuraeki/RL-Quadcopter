@@ -13,11 +13,11 @@ class DDPG(BaseAgent):
     def __init__(self, task):
         # Task information
         self.task = task
-        #self.state_size = np.prod(self.task.observation_space.shape)
-        self.state_size = 1
+        self.state_size = np.prod(self.task.observation_space.shape)
+        #self.state_size = 1
         self.state_range = self.task.observation_space.high - self.task.observation_space.low
-        #self.action_size = np.prod(self.task.action_space.shape)
-        self.action_size = 1
+        self.action_size = np.prod(self.task.action_space.shape)
+        #self.action_size = 1
         self.action_range = self.task.action_space.high - self.task.action_space.low
 
         # Actor (Policy) Model
@@ -74,7 +74,7 @@ class DDPG(BaseAgent):
         state = state.reshape(1, -1)  # convert to row vector
 
         # get only the z value
-        state = state[:, 2]
+        #state = state[:, 2]
 
         # Choose an action
         action = self.act(state)
