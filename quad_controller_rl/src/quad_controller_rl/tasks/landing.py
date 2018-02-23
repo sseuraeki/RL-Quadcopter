@@ -31,14 +31,10 @@ class Landing(BaseTask):
     def reset(self):
         # Nothing to reset; just return initial condition
         return Pose(
-                position=Point(np.random.uniform(- 150., 150.),
-                               np.random.uniform(- 150., 150.),
-                               np.random.normal(10.0, 0.1)),  # start somewhere around 10 z
+                position=Point(0.0, 0.0, np.random.normal(10.0, 0.1)),  # drop off from somewhere after takeoff
                 orientation=Quaternion(0.0, 0.0, 0.0, 0.0),
             ), Twist(
-                linear=Vector3(np.random.normal(0., 1.0),
-                               np.random.normal(0., 1.0),
-                               np.random.normal(0., 1.0)), # there might be some velocity
+                linear=Vector3(0.0, 0.0, 0.0),
                 angular=Vector3(0.0, 0.0, 0.0)
             )
 

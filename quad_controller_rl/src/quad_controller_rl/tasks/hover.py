@@ -31,7 +31,7 @@ class Hover(BaseTask):
     def reset(self):
         # Nothing to reset; just return initial condition
         return Pose(
-                position=Point(0.0, 0.0, np.random.normal(10.5, 0.1)),  # drop off from somewhere after takeoff
+                position=Point(0.0, 0.0, np.random.normal(10.0, 0.1)),  # drop off from somewhere after takeoff
                 orientation=Quaternion(0.0, 0.0, 0.0, 0.0),
             ), Twist(
                 linear=Vector3(0.0, 0.0, 0.0),
