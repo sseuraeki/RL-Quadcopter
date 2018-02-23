@@ -79,7 +79,7 @@ class DDPG(BaseAgent):
 
         # Choose an action
         action = self.act(state)
-        print('state: {}, actions: {}'.fomat(state, action))
+        print('state: {}, actions: {}'.format(state, action))
 
         # Save experience / reward
         if self.last_state is not None and self.last_action is not None:
