@@ -80,10 +80,6 @@ class DDPG(BaseAgent):
         # Choose an action
         action = self.act(state)
 
-        print(self.state_range)
-        print(self.action_range)
-        print(self.action_low)
-
         # Save experience / reward
         if self.last_state is not None and self.last_action is not None:
             self.memory.add(self.last_state, self.last_action, reward, state, done)
@@ -113,7 +109,7 @@ class DDPG(BaseAgent):
         actions += self.noise.sample()  # add some noise for exploration
 
         # get only the z linear force
-        
+        actions = np.array([0., 0., actions, 0., 0., 0., 0.])
 
         return actions
 
