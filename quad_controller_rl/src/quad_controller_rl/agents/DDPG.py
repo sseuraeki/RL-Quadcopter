@@ -110,7 +110,7 @@ class DDPG(BaseAgent):
         # get only the z linear force
         #actions[:, 3:] = 0.
         #actions[:, :2] = 0.
-        actions = [0., 0., actions, 0., 0., 0., 0.]
+        actions = np.array([0., 0., actions, 0., 0., 0., 0.])
 
         return actions
 
