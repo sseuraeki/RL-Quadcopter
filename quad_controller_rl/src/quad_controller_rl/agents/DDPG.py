@@ -107,8 +107,9 @@ class DDPG(BaseAgent):
         actions = self.actor_local.model.predict(states)
         actions += self.noise.sample()  # add some noise for exploration
 
-        # ignore torques
-        #actions[:, 3:] = 0.
+        # get only the z linear force
+        actions[:, 3:] = 0.
+        actions[:, :2] = 0.
         return actions
 
     def learn(self, experiences):
