@@ -106,7 +106,7 @@ class DDPG(BaseAgent):
         states = np.reshape(states, [-1, self.state_size])
         actions = self.actor_local.model.predict(states)
         actions += self.noise.sample()  # add some noise for exploration
-
+        print(actions)
         # get only the z linear force
         #actions[:, 3:] = 0.
         #actions[:, :2] = 0.
