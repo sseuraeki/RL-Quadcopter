@@ -75,6 +75,7 @@ class DDPG(BaseAgent):
 
         # get only the z value
         state = state[:, 2]
+        print(state)
 
         # Choose an action
         action = self.act(state)
@@ -105,7 +106,6 @@ class DDPG(BaseAgent):
         """Returns actions for given state(s) as per current policy."""
         states = np.reshape(states, [-1, self.state_size])
         actions = self.actor_local.model.predict(states)
-        print(actions)
         actions += self.noise.sample()  # add some noise for exploration
 
         # get only the z linear force
