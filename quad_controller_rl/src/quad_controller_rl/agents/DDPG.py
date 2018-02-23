@@ -21,8 +21,8 @@ class DDPG(BaseAgent):
         self.action_range = self.task.action_space.high - self.task.action_space.low
 
         # Actor (Policy) Model
-        self.action_low = self.task.action_space.low
-        self.action_high = self.task.action_space.high
+        self.action_low = self.task.action_space.low[2]
+        self.action_high = self.task.action_space.high[2]
         self.actor_local = Actor(self.state_size, self.action_size, self.action_low, self.action_high)
         self.actor_target = Actor(self.state_size, self.action_size, self.action_low, self.action_high)
 
@@ -109,7 +109,7 @@ class DDPG(BaseAgent):
         actions += self.noise.sample()  # add some noise for exploration
 
         # get only the z linear force
-        print(actions.shape)
+        
 
         return actions
 
