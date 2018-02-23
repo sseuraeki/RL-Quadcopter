@@ -91,7 +91,7 @@ class DDPG(BaseAgent):
             self.learn(experiences)
 
         self.last_state = state
-        self.last_action = action
+        self.last_action = action[:,2] # add linear z only
 
         if done:
             # Write episode stats
