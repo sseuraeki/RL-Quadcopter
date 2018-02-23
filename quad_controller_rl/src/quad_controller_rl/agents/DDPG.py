@@ -73,19 +73,11 @@ class DDPG(BaseAgent):
         state = (state - self.task.observation_space.low) / self.state_range  # scale to [0.0, 1.0]
         state = state.reshape(1, -1)  # convert to row vector
 
+        # get only the z value
+        state = state[:, 2]
+
         # Choose an action
         action = self.act(state)
-
-        # additional penalty for rewards
-        # I don't want the drone to move around too much
-        # so adding Euclidean distance from last state (x,y position)
-        # is getting added as penalty
-        if self.last_state is not None and self.last_action is not None:
-            diff_x = state[:, 0][0] - self.last_state[:, 0][0]
-            diff_y = state[:, 1][0] - self.last_state[:, 1][0]
-            distance = np.sqrt(np.square(diff_x) + np.square(diff_y))
-
-            reward -= distance * 10 # give * 10 weight to affect reward
 
         # Save experience / reward
         if self.last_state is not None and self.last_action is not None:
@@ -116,7 +108,7 @@ class DDPG(BaseAgent):
         actions += self.noise.sample()  # add some noise for exploration
 
         # ignore torques
-        actions[:, 3:] = 0.
+        #actions[:, 3:] = 0.
         return actions
 
     def learn(self, experiences):
