@@ -31,27 +31,16 @@ class Actor:
         states = layers.Input(shape=(self.state_size,), name='states')
 
         # Add hidden layers
-        net = layers.Dense(units=16)(states)
-
-        # Add batch normalization
-        net = layers.BatchNormalization()(net)
-
-        # Add relu activation
-        net = layers.Activation('relu')(net)
-
-        # Add dropout
-        #net = layers.Dropout(0.5)(net)
-
-        #net = layers.Dense(units=16, activation='relu')(net)
-
-        # Try different layer sizes, activations, add batch normalization, regularizers, etc.
+        net = layers.Dense(units=4, activation='relu')(states)
+        net = layers.Dense(units=4, activation='relu')(net)
+        net = layers.Dense(units=4, activation='relu')(net)
 
         # Add final output layer with sigmoid activation
-        raw_actions = layers.Dense(units=self.action_size, activation='tanh',
+        raw_actions = layers.Dense(units=self.action_size, activation='sigmoid',
             name='raw_actions')(net)
 
         # Scale [0, 1] output for each action dimension to proper range
-        actions = layers.Lambda(lambda x: (x * self.action_range) / 2,
+        actions = layers.Lambda(lambda x: (x * self.action_range),
             name='actions')(raw_actions)
 
         # Create Keras model
