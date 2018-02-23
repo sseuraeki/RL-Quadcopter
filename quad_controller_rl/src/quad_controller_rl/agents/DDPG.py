@@ -16,10 +16,9 @@ class DDPG(BaseAgent):
         #self.state_size = np.prod(self.task.observation_space.shape)
         self.state_size = 1
         self.state_range = self.task.observation_space.high[2] - self.task.observation_space.low[2]
-        print(self.state_range)
         #self.action_size = np.prod(self.task.action_space.shape)
         self.action_size = 1
-        self.action_range = self.task.action_space.high [2]- self.task.action_space.low[2]
+        self.action_range = self.task.action_space.high[2] - self.task.action_space.low[2]
 
         # Actor (Policy) Model
         self.action_low = self.task.action_space.low[2]
@@ -80,6 +79,10 @@ class DDPG(BaseAgent):
 
         # Choose an action
         action = self.act(state)
+
+        print(self.state_range)
+        print(self.action_range)
+        print(self.action_low)
 
         # Save experience / reward
         if self.last_state is not None and self.last_action is not None:
