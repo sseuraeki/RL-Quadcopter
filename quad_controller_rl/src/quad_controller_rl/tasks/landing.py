@@ -52,7 +52,7 @@ class Landing(BaseTask):
 
         accel_scalar = abs(linear_acceleration.x) + abs(linear_acceleration.y) + abs(linear_acceleration.z)
 
-        reward += -accel_scalar * (1 / pose.position.z)
+        reward += -accel_scalar * (1 / (pose.position.z + 1e-7)) # 1e-7 to prevent zero division
 
         # define done conditions
         if pose.position.z <= 0.1:
