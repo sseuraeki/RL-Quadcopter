@@ -120,7 +120,7 @@ class DDPG(BaseAgent):
     def learn(self, experiences):
         """Update policy and value parameters using given batch of experience tuples."""
         # Convert experience tuples to separate arrays for each element (states, actions, rewards, etc.)
-        states = np.vstack([e.state for e in experiences if e is not None])
+        states = np.vstack([e.state for e in experiences if e is not None]).astype(np.float32).reshape(-1, self.state_size)
         actions = np.array([e.action for e in experiences if e is not None]).astype(np.float32).reshape(-1, self.action_size)
         rewards = np.array([e.reward for e in experiences if e is not None]).astype(np.float32).reshape(-1, 1)
         dones = np.array([e.done for e in experiences if e is not None]).astype(np.uint8).reshape(-1, 1)
