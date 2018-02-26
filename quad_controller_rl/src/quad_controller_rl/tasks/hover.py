@@ -52,7 +52,7 @@ class Hover(BaseTask):
         if self.last_timestamp is None:
             velocity = 0.
         else:
-            velocity = (pose.position.z - self.last_position) / \
+            velocity = abs(pose.position.z - self.last_position) / \
                        max(timestamp - self.last_timestamp, 1e-6) # 1e-6 to avoid zero division
 
         # Compute reward / penalty and check if this episode is complete
