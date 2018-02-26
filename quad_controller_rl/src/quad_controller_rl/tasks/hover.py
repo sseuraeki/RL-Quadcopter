@@ -63,7 +63,7 @@ class Hover(BaseTask):
         reward += -velocity # the faster velocity the less reward
 
         # update needed states
-        self.last_timestamp = self.timestamp
+        self.last_timestamp = timestamp
         self.last_position = pose.position.z
 
         # define done conditions
