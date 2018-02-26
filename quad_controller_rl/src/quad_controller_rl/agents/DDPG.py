@@ -70,6 +70,9 @@ class DDPG(BaseAgent):
             experiences = self.memory.sample(self.batch_size)
             self.learn(experiences)
 
+        self.last_state = state
+        self.last_action = action
+        return action
 
     def act(self, states):
         """Returns actions for given state(s) as per current policy."""
