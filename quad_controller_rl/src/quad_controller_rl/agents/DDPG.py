@@ -11,7 +11,13 @@ from quad_controller_rl import util
 class DDPG(BaseAgent):
     """Reinforcement Learning agent that learns using DDPG."""
     def __init__(self, task):
-        ...
+        # Task (environment) information
+        self.task = task  # should contain observation_space and action_space
+        self.state_size = np.prod(self.task.observation_space.shape)
+        self.state_range = self.task.observation_space.high - self.task.observation_space.low
+        self.action_size = np.prod(self.task.action_space.shape)
+        self.action_range = self.task.action_space.high - self.task.action_space.low
+
         # Actor (Policy) Model
         self.action_low = self.task.action_space.low
         self.action_high = self.task.action_space.high
@@ -37,22 +43,27 @@ class DDPG(BaseAgent):
         # Algorithm parameters
         self.gamma = 0.99  # discount factor
         self.tau = 0.001  # for soft update of target parameters
-        ...
+
+        # Episode variables
+        self.reset_episode_vars()
 
     def step(self, state, reward, done):
-        ...
+        # Transform state vector
+        state = (state - self.task.observation_space.low) / self.state_range  # scale to [0.0, 1.0]
+        state = state.reshape(1, -1)  # convert to row vector
+
         # Choose an action
         action = self.act(state)
 
         # Save experience / reward
         if self.last_state is not None and self.last_action is not None:
             self.memory.add(self.last_state, self.last_action, reward, state, done)
-        ...
+
         # Learn, if enough samples are available in memory
         if len(self.memory) > self.batch_size:
             experiences = self.memory.sample(self.batch_size)
             self.learn(experiences)
-        ...
+
 
     def act(self, states):
         """Returns actions for given state(s) as per current policy."""
