@@ -13,16 +13,16 @@ class DDPG(BaseAgent):
     def __init__(self, task):
         # Task information
         self.task = task
-        #self.state_size = np.prod(self.task.observation_space.shape)
-        self.state_size = 1
-        self.state_range = self.task.observation_space.high[2] - self.task.observation_space.low[2]
-        #self.action_size = np.prod(self.task.action_space.shape)
-        self.action_size = 1
-        self.action_range = self.task.action_space.high[2] - self.task.action_space.low[2]
+        self.state_size = np.prod(self.task.observation_space.shape)
+        #self.state_size = 1
+        self.state_range = self.task.observation_space.high - self.task.observation_space.low
+        self.action_size = np.prod(self.task.action_space.shape)
+        #self.action_size = 1
+        self.action_range = self.task.action_space.high - self.task.action_space.low
 
         # Actor (Policy) Model
-        self.action_low = self.task.action_space.low[2]
-        self.action_high = self.task.action_space.high[2]
+        self.action_low = self.task.action_space.low
+        self.action_high = self.task.action_space.high
         self.actor_local = Actor(self.state_size, self.action_size, self.action_low, self.action_high)
         self.actor_target = Actor(self.state_size, self.action_size, self.action_low, self.action_high)
 

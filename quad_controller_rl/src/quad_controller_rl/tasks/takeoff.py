@@ -47,6 +47,18 @@ class Takeoff(BaseTask):
         # Compute reward / penalty and check if this episode is complete
         done = False
         reward = -min(abs(self.target_z - pose.position.z), 20.0)  # reward = zero for matching target z, -ve as you go farther, upto -20
+
+        # Extra reward by me
+        self.target_position = np.array([0., 0., 10.])
+        self.target_orientation = np.array([0., 0., 0., 0.])
+
+        error_position = np.linalg.norm(self.target_position - state[0:3])  # Euclidean distance from target position vector
+        error_orientation = np.linalg.norm(self.target_orientation - state[3:7])  # Euclidean distance from target orientation quaternion (a better comparison may be needed)
+
+        reward = -error_position
+        reward -= error_orientation
+
+
         if pose.position.z >= self.target_z:  # agent has crossed the target height
             reward += 10.0  # bonus reward
             done = True
