@@ -27,14 +27,14 @@ class Critic:
         actions = layers.Input(shape=(self.action_size,), name='actions')
 
         # Add hidden layer(s) for state pathway
-        net_states = layers.Dense(units=256, activation='relu')(states)
-        net_states = layers.Dense(units=256, activation='relu')(net_states)
-        net_states = layers.Dense(units=256, activation='relu')(net_states)
+        net_states = layers.Dense(units=16, activation='relu')(states)
+        net_states = layers.Dense(units=16, activation='relu')(net_states)
+        net_states = layers.Dense(units=16, activation='relu')(net_states)
 
         # Add hidden layer(s) for action pathway
-        net_actions = layers.Dense(units=256, activation='relu')(actions)
-        net_actions = layers.Dense(units=256, activation='relu')(net_actions)
-        net_actions = layers.Dense(units=256, activation='relu')(net_actions)
+        net_actions = layers.Dense(units=16, activation='relu')(actions)
+        net_actions = layers.Dense(units=16, activation='relu')(net_actions)
+        net_actions = layers.Dense(units=16, activation='relu')(net_actions)
 
         # Try different layer sizes, activations, add batch normalization, regularizers, etc.
 
