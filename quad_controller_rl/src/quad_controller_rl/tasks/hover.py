@@ -29,7 +29,11 @@ class Hover(BaseTask):
         self.target_z = 10.0  # target height (z position) to reach for successful takeoff
 
     def reset(self):
-        # Nothing to reset; just return initial condition
+        # reset last conditions needed
+        self.last_timestamp = None
+        self.last_position = None
+
+        # return initial condition
         return Pose(
                 position=Point(0.0, 0.0, np.random.normal(10.0, 0.1)),  # drop off from somewhere after takeoff
                 orientation=Quaternion(0.0, 0.0, 0.0, 0.0),
@@ -44,11 +48,23 @@ class Hover(BaseTask):
                 pose.position.x, pose.position.y, pose.position.z,
                 pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w])
 
+        # compute and add velocity to states
+        if self.timestamp is None:
+            velocity = 0.
+        else:
+            velocity = (pose.position.z - self.last_position) / \
+                       max(timestamp - self.last_timestamp, 1e-6) # 1e-6 to avoid zero division
+
         # Compute reward / penalty and check if this episode is complete
         done = False
         reward = 0.0
         reward += -min(abs(self.target_z - pose.position.z), 20.0)  # the farther away from the target z, the less reward
         reward += timestamp # the longer the copter survives, the more reward
+        reward += -velocity # the faster velocity the less reward
+
+        # update needed states
+        self.last_timestamp = self.timestamp
+        self.last_position = pose.position.z
 
         # define done conditions
         if pose.position.z < 1.0:
@@ -58,10 +74,8 @@ class Hover(BaseTask):
             reward -= 100.0 # big penalty when it goes too high up
             done = True
         elif timestamp > self.max_duration:  # task end
-            # very big bonus when it survives the target duration
-            # for debugging purposes, very big total_reward will indicate whether
-            # the agent succeeded or not
-            reward += 1000.0
+            # big bonus when it survives the target duration
+            reward += 100.0
             done = True
 
         # Take one RL step, passing in current state and reward, and obtain action
