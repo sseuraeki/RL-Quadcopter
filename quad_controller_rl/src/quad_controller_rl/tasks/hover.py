@@ -49,7 +49,7 @@ class Hover(BaseTask):
                 pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w])
 
         # compute and add velocity to states
-        if self.timestamp is None:
+        if self.last_timestamp is None:
             velocity = 0.
         else:
             velocity = (pose.position.z - self.last_position) / \
