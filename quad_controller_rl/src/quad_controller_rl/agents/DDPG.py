@@ -109,7 +109,7 @@ class DDPG(BaseAgent):
         actions += self.noise.sample()  # add some noise for exploration
 
         # get only the z linear force
-        actions = np.array([[0., 0., actions, 0., 0., 0.]])
+        #actions = np.array([[0., 0., actions, 0., 0., 0.]])
 
         return actions
 
