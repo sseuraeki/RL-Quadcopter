@@ -65,7 +65,6 @@ class DDPG(BaseAgent):
         self.last_state = None
         self.last_action = None
         self.total_reward = 0.0
-        self.count = 0
 
     def step(self, state, reward, done):
         # Transform state vector
@@ -88,10 +87,11 @@ class DDPG(BaseAgent):
         self.last_action = action
 
         if done:
-            self.reset_episode_vars()
             # Write episode stats
             self.write_stats([self.episode_num, self.total_reward])
             self.episode_num += 1
+            print('Total reward: {}'.format(self.total_reward))
+            self.reset_episode_vars()
 
         return action
 
