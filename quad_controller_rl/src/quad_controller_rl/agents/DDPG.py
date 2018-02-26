@@ -47,6 +47,12 @@ class DDPG(BaseAgent):
         # Episode variables
         self.reset_episode_vars()
 
+    def reset_episode_vars(self):
+        self.last_state = None
+        self.last_action = None
+        self.total_reward = 0.0
+        self.count = 0
+
     def step(self, state, reward, done):
         # Transform state vector
         state = (state - self.task.observation_space.low) / self.state_range  # scale to [0.0, 1.0]
