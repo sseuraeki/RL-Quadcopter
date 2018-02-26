@@ -74,8 +74,8 @@ class DDPG(BaseAgent):
         state = state.reshape(1, -1)  # convert to row vector
 
         # get only the z value
-        state = state[:, 2]
-        state = state.reshape(-1, 1)
+        #state = state[:, 2]
+        #state = state.reshape(-1, 1)
 
         # Choose an action
         action = self.act(state)
