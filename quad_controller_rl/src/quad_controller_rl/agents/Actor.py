@@ -37,26 +37,19 @@ class Actor:
         net = layers.Dense(units=32, activation='relu')(net)
         net = layers.Dense(units=32, activation='relu')(net)
         '''
-        net = layers.Dense(units=256)(states)
+        net = layers.Dense(units=16, activation='relu')(states)
+
+        net = layers.Dense(units=16)(net)
         net = layers.BatchNormalization()(net)
         net = layers.Activation('relu')(net)
         net = layers.Dropout(0.5)(net)
 
-        net = layers.Dense(units=256)(net)
+        net = layers.Dense(units=16)(net)
         net = layers.BatchNormalization()(net)
         net = layers.Activation('relu')(net)
         net = layers.Dropout(0.5)(net)
 
-        net = layers.Dense(units=256)(net)
-        net = layers.BatchNormalization()(net)
-        net = layers.Activation('relu')(net)
-        net = layers.Dropout(0.5)(net)
-
-        net = layers.Dense(units=256)(net)
-        net = layers.BatchNormalization()(net)
-        net = layers.Activation('relu')(net)
-        net = layers.Dropout(0.5)(net)
-
+        net = layers.Dense(units=16, activation='relu')(net)
 
         # Add final output layer with sigmoid activation
         raw_actions = layers.Dense(units=self.action_size, activation='sigmoid',

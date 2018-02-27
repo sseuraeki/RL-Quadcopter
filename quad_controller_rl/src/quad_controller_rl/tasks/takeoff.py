@@ -60,10 +60,10 @@ class Takeoff(BaseTask):
 
 
         if pose.position.z >= self.target_z:  # agent has crossed the target height
-            reward += 1000.0  # bonus reward
+            reward += 10.0  # bonus reward
             done = True
         elif timestamp > self.max_duration:  # agent has run out of time
-            reward -= 1000.0  # extra penalty
+            reward -= 10.0  # extra penalty
             done = True
 
         # Take one RL step, passing in current state and reward, and obtain action
