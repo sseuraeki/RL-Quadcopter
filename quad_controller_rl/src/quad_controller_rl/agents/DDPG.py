@@ -11,6 +11,21 @@ from quad_controller_rl import util
 class DDPG(BaseAgent):
     """Reinforcement Learning agent that learns using DDPG."""
     def __init__(self, task):
+
+        # Load/save parameters
+        self.load_weights = True  # try to load weights from previously saved models
+        self.save_weights_every = 100  # save weights every n episodes, None to disable
+        self.model_dir = util.get_param('out')  # you can use a separate subdirectory for each task and/or neural net architecture
+        self.model_name = "{}-model".format(task.taskname)
+        self.model_ext = ".h5"
+        if self.load_weights or self.save_weights_every:
+            self.actor_filename = os.path.join(self.model_dir,
+                "{}_actor{}".format(self.model_name, self.model_ext))
+            self.critic_filename = os.path.join(self.model_dir,
+                "{}_critic{}".format(self.model_name, self.model_ext))
+            print("Actor filename :", self.actor_filename)  # [debug]
+            print("Critic filename:", self.critic_filename)  # [debug]
+
         # Task (environment) information
         self.task = task  # should contain observation_space and action_space
         self.state_size = np.prod(self.task.observation_space.shape)
@@ -27,6 +42,20 @@ class DDPG(BaseAgent):
         # Critic (Value) Model
         self.critic_local = Critic(self.state_size, self.action_size)
         self.critic_target = Critic(self.state_size, self.action_size)
+
+        # Load pre-trained model weights, if available
+        if self.load_weights and os.path.isfile(self.actor_filename):
+            try:
+                self.actor_local.model.load_weights(self.actor_filename)
+                self.critic_local.model.load_weights(self.critic_filename)
+                print("Model weights loaded from file!")  # [debug]
+            except Exception as e:
+                print("Unable to load model weights from file!")
+                print("{}: {}".format(e.__class__.__name__, str(e)))
+
+        if self.save_weights_every:
+            print("Saving model weights", "every {} episodes".format(
+                self.save_weights_every) if self.save_weights_every else "disabled")  # [debug]
 
         # Initialize target model parameters with local model parameters
         self.critic_target.model.set_weights(self.critic_local.model.get_weights())
@@ -45,6 +74,7 @@ class DDPG(BaseAgent):
         self.tau = 0.001  # for soft update of target parameters
 
         # Episode variables
+        self.episode = 0
         self.reset_episode_vars()
 
         # Save episode stats
@@ -62,6 +92,7 @@ class DDPG(BaseAgent):
             header=not os.path.isfile(self.stats_filename))  # write header first time only
 
     def reset_episode_vars(self):
+        self.episode += 1
         self.last_state = None
         self.last_action = None
         self.total_reward = 0.0
@@ -92,6 +123,12 @@ class DDPG(BaseAgent):
             self.write_stats([self.episode_num, self.total_reward])
             self.episode_num += 1
             print('Total reward: {}'.format(self.total_reward))
+
+            # Save model weights at regular intervals
+            if self.save_weights_every and self.episode % self.save_weights_every == 0:
+                self.actor_local.model.save_weights(self.actor_filename)
+                self.critic_local.model.save_weights(self.critic_filename)
+                print("Model weights saved at episode", self.episode)  # [debug]
             self.reset_episode_vars()
 
         return action
