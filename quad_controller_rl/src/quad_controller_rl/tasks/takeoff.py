@@ -59,8 +59,8 @@ class Takeoff(BaseTask):
         error_position = np.linalg.norm(self.target_position - state[0:3])  # Euclidean distance from target position vector
         error_orientation = np.linalg.norm(self.target_orientation - state[3:7])  # Euclidean distance from target orientation quaternion (a better comparison may be needed)
 
-        reward = -error_position * 2.
-        reward -= error_orientation * 4.
+        reward = -error_position * 0.2
+        reward -= error_orientation * 0.4
 
 
         if pose.position.z >= self.target_z:  # agent has crossed the target height
