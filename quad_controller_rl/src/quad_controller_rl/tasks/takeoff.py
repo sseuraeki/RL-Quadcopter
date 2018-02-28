@@ -59,7 +59,7 @@ class Takeoff(BaseTask):
         error_position = np.linalg.norm(self.target_position - state[0:3])  # Euclidean distance from target position vector
         error_orientation = np.linalg.norm(self.target_orientation - state[3:7])  # Euclidean distance from target orientation quaternion (a better comparison may be needed)
 
-        reward = -error_position
+        reward = -error_position * 5.
         reward -= error_orientation * 10.
 
 
