@@ -29,9 +29,9 @@ class DDPG(BaseAgent):
         # Task (environment) information
         self.task = task  # should contain observation_space and action_space
         self.state_size = 1 # it seems only z position is needed for all the tasks
-        self.state_range = self.task.observation_space.high[:,2] - self.task.observation_space.low[:,2]
+        self.state_range = self.task.observation_space.high[2] - self.task.observation_space.low[2]
         self.action_size = 1 # it seems only z linear force is needed for all the tasks
-        self.action_range = self.task.action_space.high[:,2] - self.task.action_space.low[:,2]
+        self.action_range = self.task.action_space.high[2] - self.task.action_space.low[2]
 
         # Actor (Policy) Model
         self.action_low = self.task.action_space.low
@@ -99,12 +99,14 @@ class DDPG(BaseAgent):
 
     def step(self, state, reward, done):
         # Transform state vector
-        state = state[:,2] # position z
+        state = state[2] # position z
         state = (state - self.task.observation_space.low) / self.state_range  # scale to [0.0, 1.0]
         state = state.reshape(1, -1)  # convert to row vector
 
         # Choose an action
         action = self.act(state)
+        print(action)
+        print(task.action_space.low)
 
         # Save experience / reward
         if self.last_state is not None and self.last_action is not None:
