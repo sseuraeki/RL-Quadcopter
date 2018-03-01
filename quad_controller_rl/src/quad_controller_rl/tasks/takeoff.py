@@ -9,10 +9,6 @@ class Takeoff(BaseTask):
     """Simple task where the goal is to lift off the ground and reach a target height."""
 
     def __init__(self):
-
-        # this is for saving
-        self.taskname = 'takeoff'
-
         # State space: <position_x, .._y, .._z, orientation_x, .._y, .._z, .._w>
         cube_size = 300.0  # env is cube_size x cube_size x cube_size
         self.observation_space = spaces.Box(
@@ -51,18 +47,6 @@ class Takeoff(BaseTask):
         # Compute reward / penalty and check if this episode is complete
         done = False
         reward = -min(abs(self.target_z - pose.position.z), 20.0)  # reward = zero for matching target z, -ve as you go farther, upto -20
-
-        # Extra reward by me
-        self.target_position = np.array([0., 0., 10.])
-        self.target_orientation = np.array([0., 0., 0., 1.])
-
-        error_position = np.linalg.norm(self.target_position - state[0:3])  # Euclidean distance from target position vector
-        error_orientation = np.linalg.norm(self.target_orientation - state[3:7])  # Euclidean distance from target orientation quaternion (a better comparison may be needed)
-
-        reward = -error_position * 0.2
-        reward -= error_orientation * 0.4
-
-
         if pose.position.z >= self.target_z:  # agent has crossed the target height
             reward += 10.0  # bonus reward
             done = True
