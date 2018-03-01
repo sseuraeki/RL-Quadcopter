@@ -100,7 +100,7 @@ class DDPG(BaseAgent):
     def step(self, state, reward, done):
         # Transform state vector
         state = state[2] # position z
-        state = (state - self.task.observation_space.low) / self.state_range  # scale to [0.0, 1.0]
+        state = (state - self.task.observation_space.low[2]) / self.state_range  # scale to [0.0, 1.0]
         state = state.reshape(1, -1)  # convert to row vector
 
         # Choose an action
