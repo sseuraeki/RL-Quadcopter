@@ -29,9 +29,9 @@ class DDPG(BaseAgent):
         # Task (environment) information
         self.task = task  # should contain observation_space and action_space
         self.state_size = 1 # it seems only z position is needed for all the tasks
-        self.state_range = self.task.observation_space.high - self.task.observation_space.low
+        self.state_range = self.task.observation_space.high[2] - self.task.observation_space.low[2]
         self.action_size = 1 # it seems only z linear force is needed for all the tasks
-        self.action_range = self.task.action_space.high - self.task.action_space.low
+        self.action_range = self.task.action_space.high[2] - self.task.action_space.low[2]
 
         # Actor (Policy) Model
         self.action_low = self.task.action_space.low
