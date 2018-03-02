@@ -128,11 +128,6 @@ class DDPG_combined(BaseAgent):
                 print("Model weights saved at episode", self.episode)  # [debug]
             self.reset_episode_vars()
 
-        # revert action to 6 sized action(all 0 except for the linear z force)
-        action_temp = np.zeros([6])
-        action_temp[2] = action
-        action = action_temp
-
         return action
 
     def act(self, states):
