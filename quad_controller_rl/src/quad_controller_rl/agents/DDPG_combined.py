@@ -82,7 +82,6 @@ class DDPG_combined(BaseAgent):
             util.get_param('out'),
             "stats_{}.csv".format(util.get_timestamp()))  # path to CSV file
         self.stats_columns = ['episode', 'total_reward']  # specify columns to save
-        self.episode_num = 1
         print("Saving stats {} to {}".format(self.stats_columns, self.stats_filename))  # [debug]
 
     def write_stats(self, stats):
@@ -119,8 +118,7 @@ class DDPG_combined(BaseAgent):
 
         if done:
             # Write episode stats
-            self.write_stats([self.episode_num, self.total_reward])
-            self.episode_num += 1
+            self.write_stats([self.episode, self.total_reward])
             print('Total reward: {}'.format(self.total_reward))
 
             # Save model weights at regular intervals
@@ -141,7 +139,7 @@ class DDPG_combined(BaseAgent):
         """Returns actions for given state(s) as per current policy."""
         states = np.reshape(states, [-1, self.state_size])
         actions = self.actor_local.model.predict(states)
-        noise = 1. / self.episode_num
+        noise = 1. / (self.episode + 1)
         #return actions + self.noise.sample()  # add some noise for exploration
         return actions + noise
 
