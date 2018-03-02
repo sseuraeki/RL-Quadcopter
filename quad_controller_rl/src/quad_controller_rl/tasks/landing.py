@@ -32,7 +32,7 @@ class Landing(BaseTask):
         self.target_z = 10.0  # target height (z position) to reach for successful takeoff
         self.last_timestamp = None
         self.last_position = None
-        self.velocity_weight = 10.
+        self.velocity_weight = 1.
 
     def reset(self):
         # Nothing to reset; just return initial condition
