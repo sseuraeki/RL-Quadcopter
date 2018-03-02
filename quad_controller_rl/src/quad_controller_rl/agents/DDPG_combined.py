@@ -28,7 +28,7 @@ class DDPG_combined(BaseAgent):
 
         # Task (environment) information
         self.task = task  # should contain observation_space and action_space
-        self.state_size = 2 # z position and time elapsed(sec)
+        self.state_size = 3 # z position, velocity and time elapsed(sec)
         self.state_range = self.task.observation_space.high[2] - self.task.observation_space.low[2]
         self.action_size = 1 # it seems only z linear force is needed for all the tasks
         self.action_range = self.task.action_space.high[2] - self.task.action_space.low[2]
@@ -99,9 +99,6 @@ class DDPG_combined(BaseAgent):
 
     def step(self, state, reward, done):
         # Transform state vector
-        scaled_z = (state[2] - self.task.observation_space.low[2]) / self.state_range  # scale to [0.0, 1.0]
-        scaled_time = self.task.last_timestamp / self.task.max_duration
-        state = np.array([scaled_z, scaled_time])
         state = state.reshape(1, -1)  # convert to row vector
 
         # Choose an action

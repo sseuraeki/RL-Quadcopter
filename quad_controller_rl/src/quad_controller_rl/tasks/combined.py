@@ -58,6 +58,14 @@ class Combined(BaseTask):
             velocity = abs(pose.position.z - self.last_position) / \
                         max(timestamp - self.last_timestamp, 1e-03)  # prevent divide by zero
 
+        # scale elements to [0,1]
+        scaled_z = pose.position.z / self.observation_space.high[2]
+        max_v = (self.observation_space.high[2] - self.observation_space.low[2]) / 1e-03
+        scaled_v = velocity / max_v
+        scaled_t = timestamp / self.max_duration
+
+        state = np.array([scaled_z, scaled_v, scaled_t])
+
         # compute reward
         done = False
         reward = 0.0
