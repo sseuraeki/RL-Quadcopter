@@ -53,7 +53,7 @@ class Landing(BaseTask):
         if self.last_timestamp is None:
             velocity = 0.0
         else:
-            velocity = (pose.position.z - self.last_position) / 
+            velocity = (pose.position.z - self.last_position) / \
                         max(timestamp - self.last_timestamp, 1e-03)  # prevent divide by zero
 
         # Compute reward / penalty and check if this episode is complete
