@@ -1,14 +1,17 @@
-"""Takeoff task."""
+"""Hover task."""
 
 import numpy as np
 from gym import spaces
 from geometry_msgs.msg import Vector3, Point, Quaternion, Pose, Twist, Wrench
 from quad_controller_rl.tasks.base_task import BaseTask
 
-class Landing(BaseTask):
-    """the goal is to land gently in given time"""
+class Hover(BaseTask):
+    """Simple task where the goal is to lift off the ground and reach a target height."""
 
     def __init__(self):
+        # task name for saving models
+        self.taskname = 'hover'
+
         # State space: <position_x, .._y, .._z, orientation_x, .._y, .._z, .._w>
         cube_size = 300.0  # env is cube_size x cube_size x cube_size
         self.observation_space = spaces.Box(
@@ -26,12 +29,12 @@ class Landing(BaseTask):
 
         # Task-specific parameters
         self.max_duration = 5.0  # secs
-        self.target_z = 0.0  # target height (z position) to reach for successful landing
+        self.target_z = 10.0  # target height (z position) to reach for successful takeoff
 
     def reset(self):
         # Nothing to reset; just return initial condition
         return Pose(
-                position=Point(0.0, 0.0, np.random.normal(10.0, 0.1)),  # drop off from somewhere after takeoff
+                position=Point(0.0, 0.0, np.random.normal(10.0, 0.1)),  # drop off from the situation after takeoff
                 orientation=Quaternion(0.0, 0.0, 0.0, 0.0),
             ), Twist(
                 linear=Vector3(0.0, 0.0, 0.0),
@@ -46,21 +49,9 @@ class Landing(BaseTask):
 
         # Compute reward / penalty and check if this episode is complete
         done = False
-        reward = 0.0
-
-        # linear_acceleration as penalty but bigger when closer to land, smaller when high up
-
-        accel_scalar = abs(linear_acceleration.x) + abs(linear_acceleration.y) + abs(linear_acceleration.z)
-
-        reward += -accel_scalar * (1 / (pose.position.z + 1e-7)) # 1e-7 to prevent zero division
-
-        # define done conditions
-        if pose.position.z <= 0.1:
-            reward += self.max_duration - timestamp # time left as reward
-            reward += 100.0 # success reward
-            done = True
-        elif timestamp > self.max_duration:  # task failed
-            reward += -(pose.position.z) # height as penalty
+        reward = -linear_acceleration / pose.position.z # accel as penalty, bigger when close to land
+        if timestamp > self.max_duration:  # task done
+            reward -= pose.position.z # z position as penalty(no penalty when landed)
             done = True
 
         # Take one RL step, passing in current state and reward, and obtain action
