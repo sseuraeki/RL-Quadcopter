@@ -82,6 +82,9 @@ class Combined(BaseTask):
         if timestamp > self.max_duration:  # task done
             reward += -pose.position.z # z position as penalty(no penalty when landed)
             done = True
+        elif pose.position.z > self.target_z + 10:
+            reward += -100. # task failed
+            done = True
 
         # Take one RL step, passing in current state and reward, and obtain action
         # Note: The reward passed in here is the result of past action(s)
