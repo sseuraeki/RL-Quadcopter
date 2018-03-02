@@ -49,7 +49,7 @@ class Landing(BaseTask):
 
         # Compute reward / penalty and check if this episode is complete
         done = False
-        reward = -linear_acceleration / pose.position.z # accel as penalty, bigger when close to land
+        reward = -linear_acceleration / (pose.position.z + 1e-7) # accel as penalty, bigger when close to land
         if timestamp > self.max_duration:  # task done
             reward -= pose.position.z # z position as penalty(no penalty when landed)
             done = True
