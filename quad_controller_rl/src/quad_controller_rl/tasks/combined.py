@@ -65,7 +65,7 @@ class Combined(BaseTask):
         if timestamp <= 10.0:
             reward += -abs(pose.position.z - self.target_z) # diff between position and target as penalty
         else:
-            reward += -veolocity / max(pose.position.z, 1e-03) # velocity as penalty bigger when close to land
+            reward += -velocity / max(pose.position.z, 1e-03) # velocity as penalty bigger when close to land
 
         # update states
         self.last_timestamp = timestamp
