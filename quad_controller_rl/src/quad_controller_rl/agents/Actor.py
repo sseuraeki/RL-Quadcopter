@@ -59,7 +59,7 @@ class Actor:
 
         # Define optimizer and training function
         # https://arxiv.org/pdf/1509.02971.pdf
-        optimizer = optimizers.Adam(0.00001)
+        optimizer = optimizers.Adam(0.0001)
         updates_op = optimizer.get_updates(params=self.model.trainable_weights, loss=loss)
         self.train_fn = K.function(
             inputs=[self.model.input, action_gradients, K.learning_phase()],

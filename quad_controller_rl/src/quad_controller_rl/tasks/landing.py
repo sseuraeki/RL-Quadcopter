@@ -1,4 +1,4 @@
-"""Hover task."""
+"""Landing task."""
 
 import numpy as np
 from gym import spaces
@@ -6,7 +6,7 @@ from geometry_msgs.msg import Vector3, Point, Quaternion, Pose, Twist, Wrench
 from quad_controller_rl.tasks.base_task import BaseTask
 
 class Landing(BaseTask):
-    """Simple task where the goal is to lift off the ground and reach a target height."""
+    """Simple task where the goal is to land in given time as softly as possible."""
 
     def __init__(self):
         # task name for saving models

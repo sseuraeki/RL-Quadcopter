@@ -1,16 +1,16 @@
-"""Hover task."""
+"""Combined task."""
 
 import numpy as np
 from gym import spaces
 from geometry_msgs.msg import Vector3, Point, Quaternion, Pose, Twist, Wrench
 from quad_controller_rl.tasks.base_task import BaseTask
 
-class Hover(BaseTask):
-    """Simple task where the goal is to stay in the air at a target height for given duration"""
+class Combined(BaseTask):
+    """Combined task of takeoff, hover and landing."""
 
     def __init__(self):
         # task name for saving models
-        self.taskname = 'hover'
+        self.taskname = 'combined'
 
         # State space: <position_x, .._y, .._z, orientation_x, .._y, .._z, .._w>
         cube_size = 300.0  # env is cube_size x cube_size x cube_size
@@ -28,13 +28,17 @@ class Hover(BaseTask):
         #print("Takeoff(): action_space = {}".format(self.action_space))  # [debug]
 
         # Task-specific parameters
-        self.max_duration = 5.0  # secs
+        self.max_duration = 15.0  # secs
         self.target_z = 10.0  # target height (z position) to reach for successful takeoff
+        self.last_timestamp = None
+        self.last_position = None
+        self.velocity_weight = 0.5
 
     def reset(self):
-        # Nothing to reset; just return initial condition
+        self.last_timestamp = None
+        self.last_position = None
         return Pose(
-                position=Point(0.0, 0.0, np.random.normal(10.0, 0.1)),  # drop off from the situation after takeoff
+                position=Point(0.0, 0.0, np.random.normal(0.5, 0.1)),  # drop off from a slight random height
                 orientation=Quaternion(0.0, 0.0, 0.0, 0.0),
             ), Twist(
                 linear=Vector3(0.0, 0.0, 0.0),
@@ -47,10 +51,28 @@ class Hover(BaseTask):
                 pose.position.x, pose.position.y, pose.position.z,
                 pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w])
 
-        # Compute reward / penalty and check if this episode is complete
+        # get velocity
+        if self.last_timestamp is None:
+            velocity = 0.0
+        else:
+            velocity = abs(pose.position.z - self.last_position) / \
+                        max(timestamp - self.last_timestamp, 1e-03)  # prevent divide by zero
+
+        # compute reward
         done = False
-        reward = -min(abs(self.target_z - pose.position.z), 20.0)  # reward = zero for matching target z, -ve as you go farther, upto -20
+        reward = 0.0
+        # takeoff and hover
+        if timestamp <= 10.0:
+            reward += -abs(pose.position.z - self.target_z) # diff between position and target as penalty
+        else:
+            reward += -veolocity / max(pose.position.z, 1e-03) # velocity as penalty bigger when close to land
+
+        # update states
+        self.last_timestamp = timestamp
+        self.last_position = pose.position.z
+
         if timestamp > self.max_duration:  # task done
+            reward += -pose.position.z # z position as penalty(no penalty when landed)
             done = True
 
         # Take one RL step, passing in current state and reward, and obtain action
