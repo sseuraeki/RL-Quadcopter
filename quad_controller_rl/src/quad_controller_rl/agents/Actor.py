@@ -39,6 +39,8 @@ class Actor:
         '''
         net = layers.Dense(units=8, activation='relu')(states)
         net = layers.Dense(units=8, activation='relu')(net)
+        net = layers.Dense(units=8, activation='relu')(net)
+        net = layers.Dense(units=8, activation='relu')(net)
 
         # Add final output layer with sigmoid activation
         raw_actions = layers.Dense(units=self.action_size, activation='sigmoid',
