@@ -141,7 +141,9 @@ class DDPG_combined(BaseAgent):
         """Returns actions for given state(s) as per current policy."""
         states = np.reshape(states, [-1, self.state_size])
         actions = self.actor_local.model.predict(states)
-        return actions + self.noise.sample()  # add some noise for exploration
+        noise = 1. / self.episode_num
+        #return actions + self.noise.sample()  # add some noise for exploration
+        return actions + noise
 
     def learn(self, experiences):
         """Update policy and value parameters using given batch of experience tuples."""
