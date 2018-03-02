@@ -32,6 +32,7 @@ class Landing(BaseTask):
         self.target_z = 10.0  # target height (z position) to reach for successful takeoff
         self.last_timestamp = None
         self.last_position = None
+        self.velocity_weight = 10.
 
     def reset(self):
         # Nothing to reset; just return initial condition
@@ -58,7 +59,8 @@ class Landing(BaseTask):
 
         # Compute reward / penalty and check if this episode is complete
         done = False
-        reward = -velocity / max(pose.position.z, 1e-03) # velocity as penalty bigger when closer to land
+        reward = self.velocity_weight * \
+                 (-velocity / max(pose.position.z, 1e-03)) # velocity as penalty bigger when closer to land
         if timestamp > self.max_duration:  # task done
             reward -= pose.position.z # z position as penalty(no penalty when landed)
             done = True
