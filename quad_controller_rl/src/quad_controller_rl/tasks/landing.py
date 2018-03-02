@@ -5,12 +5,12 @@ from gym import spaces
 from geometry_msgs.msg import Vector3, Point, Quaternion, Pose, Twist, Wrench
 from quad_controller_rl.tasks.base_task import BaseTask
 
-class Hover(BaseTask):
+class Landing(BaseTask):
     """Simple task where the goal is to lift off the ground and reach a target height."""
 
     def __init__(self):
         # task name for saving models
-        self.taskname = 'hover'
+        self.taskname = 'landing'
 
         # State space: <position_x, .._y, .._z, orientation_x, .._y, .._z, .._w>
         cube_size = 300.0  # env is cube_size x cube_size x cube_size
