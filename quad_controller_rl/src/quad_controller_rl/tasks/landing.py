@@ -65,6 +65,10 @@ class Landing(BaseTask):
             reward -= pose.position.z # z position as penalty(no penalty when landed)
             done = True
 
+        # update states
+        self.last_timestamp = timestamp
+        self.last_position = pose.position.z
+
         # Take one RL step, passing in current state and reward, and obtain action
         # Note: The reward passed in here is the result of past action(s)
         action = self.agent.step(state, reward, done)  # note: action = <force; torque> vector
