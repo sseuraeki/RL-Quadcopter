@@ -32,12 +32,13 @@ class Landing(BaseTask):
         self.target_z = 10.0  # target height (z position) to reach for successful takeoff
         self.last_timestamp = None
         self.last_position = None
-        self.velocity_weight = 1.
+        self.velocity_weight = 0.5
 
     def reset(self):
-        # Nothing to reset; just return initial condition
+        self.last_timestamp = None
+        self.last_position = None
         return Pose(
-                position=Point(0.0, 0.0, np.random.normal(10.0, 0.1)),  # drop off from the situation after takeoff
+                position=Point(0.0, 0.0, np.random.normal(10.0, 0.1)),  # drop off from the situation after hover
                 orientation=Quaternion(0.0, 0.0, 0.0, 0.0),
             ), Twist(
                 linear=Vector3(0.0, 0.0, 0.0),
@@ -61,13 +62,14 @@ class Landing(BaseTask):
         done = False
         reward = self.velocity_weight * \
                  (-velocity / max(pose.position.z, 1e-03)) # velocity as penalty bigger when closer to land
-        if timestamp > self.max_duration:  # task done
-            reward -= pose.position.z # z position as penalty(no penalty when landed)
-            done = True
 
         # update states
         self.last_timestamp = timestamp
         self.last_position = pose.position.z
+
+        if timestamp > self.max_duration:  # task done
+            reward -= pose.position.z # z position as penalty(no penalty when landed)
+            done = True
 
         # Take one RL step, passing in current state and reward, and obtain action
         # Note: The reward passed in here is the result of past action(s)
