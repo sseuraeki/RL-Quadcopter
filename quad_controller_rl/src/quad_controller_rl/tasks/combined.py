@@ -50,8 +50,8 @@ class Combined(BaseTask):
                         max(timestamp - self.last_timestamp, 1e-03)  # prevent divide by zero
 
         # scale elements to [0,1]
-        max_z = 25.
-        min_z = -25.
+        max_z = 300.
+        min_z = 0.
         scaled_z = pose.position.z / max_z
         max_v = (max_z - min_z) / 1e-03
         scaled_v = velocity / max_v
@@ -87,7 +87,7 @@ class Combined(BaseTask):
 
         # Convert to proper force command (a Wrench object) and return it
         if action is not None:
-            action = np.clip(action.flatten(), self.action_space.low[2], self.action_space.high[2])  # flatten, clamp to action space limits
+            action = np.clip(action.flatten(), -25., 25.)  # flatten, clamp to action space limits
             return Wrench(
                     force=Vector3(0., 0., action),
                     torque=Vector3(0., 0., 0.)
