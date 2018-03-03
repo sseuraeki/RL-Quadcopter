@@ -26,7 +26,7 @@ class DDPG(BaseAgent):
             print("Actor filename :", self.actor_filename)  # [debug]
             print("Critic filename:", self.critic_filename)  # [debug]
 
-        if task.taskname == 'combined':
+        if self.task.taskname == 'combined':
             self.actor_filename2 = 'combined-model_actor2.h5'
             self.actor_filename3 = 'combined-model_actor3.h5'
             self.critic_filename2 = 'combined-model_critic2.h5'
@@ -57,7 +57,7 @@ class DDPG(BaseAgent):
 
         # Load pre-trained model weights, if available
         if self.load_weights and os.path.isfile(self.actor_filename):
-            if task.taskname == 'combined':
+            if self.task.taskname == 'combined':
                 try:
                     self.actor_local1.model.load_weights(self.actor_filename)
                     self.critic_local1.model.load_weights(self.critic_filename)
@@ -155,7 +155,7 @@ class DDPG(BaseAgent):
                 self.actor_local1.model.save_weights(self.actor_filename)
                 self.critic_local1.model.save_weights(self.critic_filename)
                 print("Model weights saved at episode", self.episode)  # [debug]
-                if task.taskname == 'combined':
+                if self.task.taskname == 'combined':
                     self.actor_local2.model.save_weights(self.actor_filename2)
                     self.critic_local2.model.save_weights(self.critic_filename2)
                     self.actor_local3.model.save_weights(self.actor_filename3)

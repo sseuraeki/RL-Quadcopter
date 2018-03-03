@@ -53,10 +53,8 @@ class Combined(BaseTask):
         max_z = 300.
         min_z = 0.
         scaled_z = pose.position.z / max_z
-        max_v = (max_z - min_z) / 1e-03
-        scaled_v = velocity / max_v
 
-        state = np.array([scaled_z, scaled_v])
+        state = np.array([scaled_z, velocity])
 
         # compute reward
         done = False
