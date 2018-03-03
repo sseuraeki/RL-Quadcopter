@@ -17,8 +17,8 @@ class Combined(BaseTask):
         self.target_z = 10.0  # target height (z position)
         self.last_timestamp = None
         self.last_position = None
-        self.position_weight = 0.5 # to adjust rewards mechanism
-        self.velocity_weight = 0.5
+        self.position_weight = 0.7 # to adjust rewards mechanism
+        self.velocity_weight = 0.3
 
     def reset(self):
         self.last_timestamp = None
@@ -59,7 +59,7 @@ class Combined(BaseTask):
         # compute reward
         done = False
         reward = 0.0
-        # takeoff and hover
+        # takeoff and hover rewards
         if timestamp <= 10.0:
             position_score = -abs(pose.position.z - self.target_z) # diff between position and target as penalty
             reward += self.position_weight * position_score
@@ -68,6 +68,15 @@ class Combined(BaseTask):
             velocity_score = -velocity / max(pose.position.z, 1e-03) # velocity as penalty bigger when close to land
             reward += self.position_weight * position_score
             reward += self.velocity_weight * velocity_score
+
+        # reset situations
+        if timestamp > 5.0 and timestamp <= 10.0 \
+           and abs(pose.position.z - self.target_z) > 1.0:
+           reward += - 100. # penalty for not accomplishing takeoff
+           done = True # reset
+        elif pose.position.z > 15.0:
+            reward += - 100. # penalty for going too high up
+            done = True
 
         # update states
         self.last_timestamp = timestamp
