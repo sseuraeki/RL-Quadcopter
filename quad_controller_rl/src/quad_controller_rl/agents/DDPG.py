@@ -12,6 +12,8 @@ class DDPG(BaseAgent):
     """Reinforcement Learning agent that learns using DDPG."""
     def __init__(self, task):
 
+        self.task = task
+
         # Load/save parameters
         self.load_weights = True  # try to load weights from previously saved models
         self.save_weights_every = 100  # save weights every n episodes, None to disable
@@ -33,7 +35,6 @@ class DDPG(BaseAgent):
             self.critic_filename3 = 'combined-model_critic3.h5'
 
         # Task (environment) information
-        self.task = task  # should contain observation_space and action_space
         self.state_size = 2 # it seems z position and z velocity are all that needed
         self.action_size = 1 # it seems only z linear force is needed for all the tasks
 
