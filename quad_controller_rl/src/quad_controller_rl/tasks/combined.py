@@ -90,6 +90,9 @@ class Combined(BaseTask):
             reward += -1000. # task failed
             done = True
 
+        # longer it survives, more reward
+        reward += timestamp * 10.
+
         # Take one RL step, passing in current state and reward, and obtain action
         # Note: The reward passed in here is the result of past action(s)
         action = self.agent.step(state, reward, done, self.mode)
