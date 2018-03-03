@@ -64,7 +64,9 @@ class Combined(BaseTask):
             position_score = -abs(pose.position.z - self.target_z) # diff between position and target as penalty
             reward += self.position_weight * position_score
         else:
+            position_score = -pose.position.z
             velocity_score = -velocity / max(pose.position.z, 1e-03) # velocity as penalty bigger when close to land
+            reward += self.position_weight * position_score
             reward += self.velocity_weight * velocity_score
 
         # update states
