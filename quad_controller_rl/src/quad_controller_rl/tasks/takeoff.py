@@ -30,6 +30,8 @@ class Takeoff(BaseTask):
         # Task-specific parameters
         self.max_duration = 5.0  # secs
         self.target_z = 10.0  # target height (z position) to reach for successful takeoff
+        self.last_timestamp = None
+        self.last_position = None
 
     def reset(self):
         # Nothing to reset; just return initial condition
@@ -46,6 +48,20 @@ class Takeoff(BaseTask):
         state = np.array([
                 pose.position.x, pose.position.y, pose.position.z,
                 pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w])
+
+        # get velocity
+        if self.last_timestamp is None:
+            velocity = 0.0
+        else:
+            velocity = abs(pose.position.z - self.last_position) / \
+                        max(timestamp - self.last_timestamp, 1e-03)  # prevent divide by zero
+
+        # scale elements to [0,1]
+        scaled_z = pose.position.z / self.observation_space.high[2]
+        max_v = (self.observation_space.high[2] - self.observation_space.low[2]) / 1e-03
+        scaled_v = velocity / max_v
+
+        state = np.array([scaled_z, scaled_v])
 
         # Compute reward / penalty and check if this episode is complete
         done = False

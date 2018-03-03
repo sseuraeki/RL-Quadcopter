@@ -12,26 +12,12 @@ class Combined(BaseTask):
         # task name for saving models
         self.taskname = 'combined'
 
-        # State space: <position_x, .._y, .._z, orientation_x, .._y, .._z, .._w>
-        cube_size = 300.0  # env is cube_size x cube_size x cube_size
-        self.observation_space = spaces.Box(
-            np.array([- cube_size / 2, - cube_size / 2,       0.0, -1.0, -1.0, -1.0, -1.0]),
-            np.array([  cube_size / 2,   cube_size / 2, cube_size,  1.0,  1.0,  1.0,  1.0]))
-        #print("Takeoff(): observation_space = {}".format(self.observation_space))  # [debug]
-
-        # Action space: <force_x, .._y, .._z, torque_x, .._y, .._z>
-        max_force = 25.0
-        max_torque = 25.0
-        self.action_space = spaces.Box(
-            np.array([-max_force, -max_force, -max_force, -max_torque, -max_torque, -max_torque]),
-            np.array([ max_force,  max_force,  max_force,  max_torque,  max_torque,  max_torque]))
-        #print("Takeoff(): action_space = {}".format(self.action_space))  # [debug]
-
         # Task-specific parameters
-        self.max_duration = 15.0  # secs
-        self.target_z = 10.0  # target height (z position) to reach for successful takeoff
+        self.max_duration = 15.0  # 5 secs for each task
+        self.target_z = 10.0  # target height (z position)
         self.last_timestamp = None
         self.last_position = None
+        self.position_weight = 0.5 # to adjust rewards mechanism
         self.velocity_weight = 0.5
 
     def reset(self):
@@ -46,10 +32,15 @@ class Combined(BaseTask):
             )
 
     def update(self, timestamp, pose, angular_velocity, linear_acceleration):
-        # Prepare state vector (pose only; ignore angular_velocity, linear_acceleration)
-        state = np.array([
-                pose.position.x, pose.position.y, pose.position.z,
-                pose.orientation.x, pose.orientation.y, pose.orientation.z, pose.orientation.w])
+
+        # set mode
+        # 1 = takeoff, 2 = hover, 3 = landing
+        if timestamp <= 5.0:
+            self.mode = 1
+        elif timestamp <= 10.0:
+            self.mode = 2
+        else:
+            self.mode = 3
 
         # get velocity
         if self.last_timestamp is None:
@@ -62,18 +53,19 @@ class Combined(BaseTask):
         scaled_z = pose.position.z / self.observation_space.high[2]
         max_v = (self.observation_space.high[2] - self.observation_space.low[2]) / 1e-03
         scaled_v = velocity / max_v
-        scaled_t = timestamp / self.max_duration
 
-        state = np.array([scaled_z, scaled_v, scaled_t])
+        state = np.array([scaled_z, scaled_v])
 
         # compute reward
         done = False
         reward = 0.0
         # takeoff and hover
         if timestamp <= 10.0:
-            reward += -abs(pose.position.z - self.target_z) # diff between position and target as penalty
+            position_score = -abs(pose.position.z - self.target_z) # diff between position and target as penalty
+            reward += self.position_weight * position_score
         else:
-            reward += -velocity / max(pose.position.z, 1e-03) # velocity as penalty bigger when close to land
+            velocity_score = -velocity / max(pose.position.z, 1e-03) # velocity as penalty bigger when close to land
+            reward += self.velocity_weight * velocity_score
 
         # update states
         self.last_timestamp = timestamp
@@ -89,7 +81,7 @@ class Combined(BaseTask):
 
         # Take one RL step, passing in current state and reward, and obtain action
         # Note: The reward passed in here is the result of past action(s)
-        action = self.agent.step(state, reward, done)  # note: action = <force; torque> vector
+        action = self.agent.step(state, reward, done, self.mode)
 
         # Convert to proper force command (a Wrench object) and return it
         if action is not None:
