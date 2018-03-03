@@ -162,11 +162,6 @@ class DDPG(BaseAgent):
                     self.critic_local3.model.save_weights(self.critic_filename3)
             self.reset_episode_vars()
 
-        # revert action to 6 sized action(all 0 except for the linear z force)
-        action_temp = np.zeros([6])
-        action_temp[2] = action
-        action = action_temp
-
         return action
 
     def act(self, states, mode=1):
