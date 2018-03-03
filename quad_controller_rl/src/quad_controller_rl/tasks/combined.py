@@ -50,8 +50,10 @@ class Combined(BaseTask):
                         max(timestamp - self.last_timestamp, 1e-03)  # prevent divide by zero
 
         # scale elements to [0,1]
-        scaled_z = pose.position.z / self.observation_space.high[2]
-        max_v = (self.observation_space.high[2] - self.observation_space.low[2]) / 1e-03
+        max_z = 25.
+        min_z = -25.
+        scaled_z = pose.position.z / max_z
+        max_v = (max_z - min_z) / 1e-03
         scaled_v = velocity / max_v
 
         state = np.array([scaled_z, scaled_v])
